@@ -150,7 +150,7 @@ limit 1;
 
 select title, duration 
 from track
-where duration > 210; -- Указанно в секундах (3.5 мин)
+where duration >= 210; -- Указанно в секундах (3.5 мин)
 
 select title, release_year 
 from compilation 
@@ -190,11 +190,13 @@ join album on track.album_id = album.album_id
 group by album.title;
 
 --Все исполнители, которые не выпустили альбомы в 2020 году.
-select name
+select artist.name
 from artist
-left join album_artist on artist.artist_id = album_artist.artist_id 
-left join album on album_artist.album_id = album.album_id and album.release_year = 2020
-where album.album_id is null;
+left join album_artist on artist.artist_id = album_artist.artist_id
+left join album on album_artist.album_id = album.album_id
+where album.release_year != 2020 OR album.release_year IS NULL
+group by artist.name
+having count(distinct album.release_year) = 0;
 
 --Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами).
 select distinct compilation.title
